@@ -1,7 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, ScrollView, FlatList } from 'react-native';
+import { StyleSheet, View, Button, TextInput, FlatList } from 'react-native';
 import GoalItem from './components/GoalItem';
+import InputComponent from './components/InputComponent';
 
 export default function App() {
 
@@ -31,10 +32,11 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <TextInput placeholderTextColor="white" onChangeText={updateEnteredGoal} value={enteredGoal.text} style={styles.textInput} placeholder={"Course goal"} />
-        <Button onPress={addGoalListElement} title="ADD" />
-      </View>
+      <InputComponent
+        updateEnteredGoal={updateEnteredGoal}
+        enteredGoal={enteredGoal}
+        addGoalListElement={addGoalListElement}
+      />
       <FlatList data={goalList} renderItem={data => <GoalItem text={data.item.text} />} />
       <StatusBar style="auto" />
     </View>
@@ -45,17 +47,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 50
   },
-  textInput: {
-    borderRadius: 7,
-    paddingLeft: 7,
-    width: '80%',
-    backgroundColor: '#4267B2',
-    color: 'white'
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 30
-  },
+
+
 
 });
