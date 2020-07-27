@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Button, TextInput, FlatList } from 'react-native';
 import GoalItem from './components/GoalItem';
 import InputComponent from './components/InputComponent';
+import { guidGenerator } from './utils/utils';
 
 export default function App() {
 
@@ -12,6 +13,7 @@ export default function App() {
     text: ''
   })
   const [goalList, setGoalList] = useState([])
+  const [modalVisible, setModalVisible] = useState(false)
 
   const updateEnteredGoal = (enteredText) => {
     setEnteredGoal({
@@ -20,24 +22,54 @@ export default function App() {
     })
   }
 
-  const addGoalListElement = () => {
+  const addGoalListElement = async () => {
     if (enteredGoal.text) {
-      setGoalList(currentGoalListElements => [...currentGoalListElements, enteredGoal])
+
+      const key = guidGenerator()
+
+      setGoalList(currentGoalListElements => [...currentGoalListElements, {
+        key,
+        text: enteredGoal.text
+      }])
       setEnteredGoal({
         key: '',
         text: ''
       })
+
+
     }
   }
 
+  const onDelete = (goalId) => {
+
+    setGoalList(currentGoalList => {
+      return currentGoalList.filter(goal => {
+        return goal.key !== goalId
+      })
+    })
+  }
+
+  const makeModalVisible = () => {
+    setModalVisible(true)
+  }
+
+  const makeModalInvisible = () => {
+    setModalVisible(false)
+  }
+
+
+
   return (
     <View style={styles.container}>
+      <Button onPress={makeModalVisible} title={"Add new goal"} />
       <InputComponent
         updateEnteredGoal={updateEnteredGoal}
         enteredGoal={enteredGoal}
         addGoalListElement={addGoalListElement}
+        modalVisible={modalVisible}
+        makeModalInvisible={makeModalInvisible}
       />
-      <FlatList data={goalList} renderItem={data => <GoalItem text={data.item.text} />} />
+      <FlatList data={goalList} renderItem={data => <GoalItem onDelete={onDelete.bind(this, data.item.key)} text={data.item.text} />} />
       <StatusBar style="auto" />
     </View>
   );
